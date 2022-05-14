@@ -11,32 +11,38 @@ CRITIAL = 2
 parser = argparse.ArgumentParser(prog="check_varnish_health", description='Check the health of each Varnish backend')
 
 # Add the arguments
-parser.add_argument('Path', metavar='path', type=str, help='the path to list')
-parser.add_argument('Args', metavar='args', type=str, help='list backend parameter')
+parser.add_argument('--verbose', metavar='verbose', type=bool, default=False, help='Enable verbose output')
+parser.add_argument('path', metavar='path', type=str, help='the path to list')
+parser.add_argument('args', metavar='args', type=str, help='list backend parameter')
 
 # Execute the parse_args() method
 args = parser.parse_args()
 
-varnishadm_path = args.Path
-varnishadm_args = args.Args
-
-#print(f"Path: {varnishadm_path}\nArgs: {varnishadm_args}")
+verbose = args.verbose
+varnishadm_path = args.path
+varnishadm_args = args.args
 
 command = subprocess.run([varnishadm_path, varnishadm_args], capture_output=True, text=True).stdout
 
-b = command.split("\n")
+cmd = command.split("\n")
 
 b_healthy, b_sick, b_unknown = [], [], []
-for l in b:
+for l in cmd:
     if l.startswith("reload") or l.startswith("boot"):
         if "healthy" in l:
-            b_healthy.append(l.split(" ")[1])
-            print('healthy')
+            p = l.partition('.')[2]
+            b_healthy.append(p.split(" ")[0])
         if "sick" in l:
-            b_sick.append(l.split(" ")[1])
-        else:
-            b_unknown.append(l.split(" ")[1])
+            p = l.partition('.')[2]
+            b_sick.append(p.split(" ")[0])
 
+if verbose: print(f"Healthy Backends: {b_healthy}")
+if verbose: print(f"Sick Backends: {b_sick}")
+
+if b_sick:
+    print("%s backends are sick! %s" %  (len(b_sick), " ".join(b_sick)))
 
 if b_healthy:
     print ("All %s backends are healthy" % (len(b_healthy)))
+
+
