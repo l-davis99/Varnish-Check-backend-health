@@ -40,6 +40,7 @@ b_healthy, b_sick, b_unknown = [], [], []
 # loop over each line from varnishadm output
 for l in cmd:
     # depending on what the line contains, place it in the correct array
+    # not the most efficient way but the easiest to provide support for multiple python versions.
     if "good" in l:
         p = l.partition('.')[2]
         b_healthy.append(p.split(" ")[0])
