@@ -40,12 +40,19 @@ b_healthy, b_sick, b_unknown = [], [], []
 # loop over each line from varnishadm output
 for l in cmd:
     # depending on what the line contains, place it in the correct array
+    if "good" in l:
+        p = l.partition('.')[2]
+        b_healthy.append(p.split(" ")[0])
     if "healthy" in l:
         p = l.partition('.')[2]
         b_healthy.append(p.split(" ")[0])
+    if "bad" in l:
+        p = l.partition('.')[2]
+        b_sick.append(p.split(" ")[0])
     if "sick" in l:
         p = l.partition('.')[2]
         b_sick.append(p.split(" ")[0])
+
 
 # verbose ouput to see what the script is detecting
 if verbose: print(f"Healthy Backends: {b_healthy}")
