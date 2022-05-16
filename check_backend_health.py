@@ -12,7 +12,7 @@ import argparse
 UNKNOWN = -1
 OK = 0
 WARNING = 1
-CRITIAL = 2
+CRITICAL = 2
 
 # handle cli-based parameters
 parser = argparse.ArgumentParser(prog="check_varnish_health", description='Check the health of each Varnish backend')
@@ -51,7 +51,7 @@ for l in cmd:
             p = l.partition('.')[2]
             b_sick.append(p.split(" ")[0])
 
-# verbose ouput to see what the script is detectign
+# verbose ouput to see what the script is detecting
 if verbose: print(f"Healthy Backends: {b_healthy}")
 if verbose: print(f"Sick Backends: {b_sick}\n")
 
